@@ -1,0 +1,166 @@
+package notepad;
+
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JTextArea;
+
+public class notepad extends WindowAdapter
+{
+    JFrame f;
+    JMenuBar mb;
+    JMenu file,edit,format,view,help;
+    JMenuItem neww,open,save,cut,copy,paste;
+    JTextArea t;
+    Font ff;  
+    
+    notepad()
+    {
+        f=new JFrame("Notepad");
+        f.setSize(1200,800);
+        f.setVisible(true);
+        f.setLayout(null);
+        f.addWindowListener(this);
+        
+        ff=new Font("Shruti", Font.PLAIN  , 20);
+                
+        mb=new JMenuBar();
+        f.setJMenuBar(mb);   // important
+        
+        file=new JMenu("File");
+        mb.add(file);
+        edit=new JMenu("Edit");
+        mb.add(edit);
+        format=new JMenu("Format");
+        mb.add(format);
+        view=new JMenu("View");
+        mb.add(view);
+        help=new JMenu("Help");
+        mb.add(help);
+        
+        neww=new JMenuItem("New");
+        file.add(neww);
+        open=new JMenuItem("Open");
+        file.add(open);
+        save=new JMenuItem("Save");
+        file.add(save);
+        
+        cut=new JMenuItem("Cut");
+        edit.add(cut);
+        copy=new JMenuItem("Copy");
+        edit.add(copy);
+        paste=new JMenuItem("Paste");
+        edit.add(paste);
+        
+        t=new JTextArea();
+        t.setBounds(5, 5, 1200, 800);
+        t.setFont(ff);
+        f.add(t);
+        
+        neww.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) 
+            {
+                t.setText("");
+            }
+        });
+        save.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) 
+            {
+                JFileChooser c=new JFileChooser();  // memory allocat
+                
+                int sav=c.showSaveDialog(f);  // show save dialogbox
+                System.out.println(""+sav);   // print boolean value, if true=0 & false=1
+                
+                if(sav==0)
+                {
+                    String path=c.getSelectedFile().getPath();  // data store in path string
+                    System.out.println(""+path);  // print path
+
+                    try 
+                    {
+                        FileWriter fw=new FileWriter(path+".txt");  //for save the file with .txt 
+                        
+                        t.write(fw);  // data write in textarea
+                        fw.close();   // 
+                    }
+                    catch (IOException ex) {
+                        Logger.getLogger(notepad.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        });
+        open.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) 
+            {
+                JFileChooser fc=new JFileChooser();  // memory allocat
+               
+                int ope=fc.showOpenDialog(f);  // show open dialogbox
+                System.out.println(""+ope);   // print boolean value, if true=0 & false=1
+                
+                if(ope==0)
+                {
+                    String path=fc.getSelectedFile().getPath();  // data store in path string
+                    System.out.println(""+path);  // print path
+                    
+                   try
+                    {
+                        FileReader fr= new FileReader(path);  //for open the file from path
+            
+                        Scanner x=new Scanner(fr);
+                        
+                        while(x.hasNext())
+                        {
+                            t.setText(x.nextLine());  // write in saved file(editing) // that's why we have to put a value from user(Scanner)
+                        }
+                    } 
+                    catch (FileNotFoundException ex) {
+                        Logger.getLogger(notepad.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                        
+                }
+            }
+        });
+        cut.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) 
+            {
+                t.cut();
+            }
+        });
+        copy.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) 
+            {
+                t.copy();
+            }
+        });
+        paste.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) 
+            {
+                t.paste();
+            }
+        });
+    }
+    public static void main(String[] args) 
+    {
+        notepad z=new notepad();
+    }
+    
+}
